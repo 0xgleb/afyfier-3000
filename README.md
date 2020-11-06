@@ -23,3 +23,7 @@ you can test it with:
 ```shell
 curl -XPOST -F text='this is some simple text' localhost:5000/afyfy
 ```
+
+# Examples
+
+- Fraud prevention agencies - we will let fraud prevention agencies know if you give us false or fraudulent information.
