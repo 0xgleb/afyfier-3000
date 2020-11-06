@@ -18,3 +18,8 @@ pip install flask
 ```shell
 FLASK_APP=server.py flask run &
 ```
+
+you can test it with:
+```shell
+curl -XPOST -F text='this is some simple text' localhost:5000/afyfier
+```
