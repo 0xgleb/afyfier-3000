@@ -4,7 +4,6 @@ import Browser
 import Element
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html, button, div, p, text, textarea)
 import Html.Attributes exposing (size, style)
@@ -51,7 +50,7 @@ init _ =
 
 type Msg
     = InputChanged String
-    | Simplification
+    | SimplifyRequested
     | GotResponse (Result Http.Error String)
 
 
@@ -63,8 +62,8 @@ update msg model =
             , Cmd.none
             )
 
-        Simplification ->
-            ( model
+        SimplifyRequested ->
+            ( { model | error = Nothing }
             , extractData model.inputText
             )
 
@@ -104,11 +103,13 @@ view model =
         [ Element.width Element.fill
         , Element.spaceEvenly
         , Background.color (Element.rgb 255 0 254)
-        , Font.family [ Font.typeface "Comic Sans" ]
         ]
     <|
         Element.column [ Element.width Element.fill ]
-            [ Element.row [ Element.width Element.fill ]
+            [ Element.text <|
+                Maybe.withDefault "" <|
+                    Maybe.map errorToString model.error
+            , Element.row [ Element.width Element.fill ]
                 [ Element.el
                     [ Element.alignLeft
                     , Element.width Element.fill
@@ -137,7 +138,6 @@ view model =
                   <|
                     Input.multiline
                         [ Background.color <| Element.rgb 250 255 9
-                        , Element.spacing 100
                         , Element.width <| Element.fill
                         , Element.height <| Element.px 500
                         ]
@@ -164,11 +164,36 @@ view model =
                         , Border.rounded 3
                         , Element.padding 10
                         ]
-                        { onPress = Just Simplification
+                        { onPress = Just SimplifyRequested
                         , label = Element.text "Simplify"
                         }
                 ]
             ]
+
+
+errorToString : Http.Error -> String
+errorToString error =
+    case error of
+        Http.BadUrl url ->
+            "The URL " ++ url ++ " was invalid"
+
+        Http.Timeout ->
+            "Unable to reach the server, try again"
+
+        Http.NetworkError ->
+            "Unable to reach the server, check your network connection"
+
+        Http.BadStatus 500 ->
+            "The server had a problem, try again later"
+
+        Http.BadStatus 400 ->
+            "Verify your information and try again"
+
+        Http.BadStatus _ ->
+            "Unknown error"
+
+        Http.BadBody errorMessage ->
+            errorMessage
 
 
 

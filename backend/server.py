@@ -1,5 +1,5 @@
 from simplifier import afyfy
-from flask import Flask, request
+from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 @app.after_request
@@ -11,4 +11,8 @@ def after_request(response):
 
 @app.route('/afyfy', methods=['POST'])
 def hello_world():
-    return afyfy(request.get_json())
+    return jsonify(afyfy(request.get_json()))
+
+# @app.route('/summarize', methods=['POST'])
+# def hello_world():
+#     return jsonify(afyfy(request.get_json()))
