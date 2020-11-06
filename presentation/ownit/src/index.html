@@ -14,8 +14,19 @@
     <canvas id="bckg"></canvas>
     <div class="reveal">
       <div class="slides">
-        <section>Slide 1</section>
-        <section>Slide 2</section>
+        <!-- Slides are separated by three dashes (quick 'n dirty regular expression) -->
+        <section data-markdown data-separator="---">
+          <script type="text/template">
+                        ## Demo 1
+                        Slide 1
+                        ---
+                        ## Demo 1
+                        Slide 2
+                        ---
+                        ## Demo 1
+                        Slide 3
+          </script>
+        </section>
       </div>
     </div>
   $bundles
