@@ -13,3 +13,8 @@ pip install sentence-transformers # this dependency requires Rust
 pip install nltk
 pip install flask
 ```
+
+# Run the backend
+```shell
+FLASK_APP=server.py flask run &
+```
