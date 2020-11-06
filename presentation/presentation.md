@@ -5,8 +5,6 @@
 ---
 ## We want to drive financial literacy
 
-And most financial documents are long, annoying, and scary.
-
 ---
 ## Problem
 
@@ -41,6 +39,7 @@ BERT was born at Google and his full name is "Bidirectional Encoder Representati
 
 The version of BERT that Afyfier 3000 uses has 340M parameters. It was trained on the BooksCorpus with 800 million words, and the English version of Wikipedia with 2.5 billion words.
 
+---
 <img src="http://localhost:5000/presentation/images/bert-transformer.png" />
 
 ---
@@ -79,14 +78,15 @@ We are trying to make the text simpler, and not harder. So if BERT suggests word
 ## Afyfier 3000
 
 What we do:
-- take the input sentence
-- use a neural network to identify complex words
-- for each complex word we get alternatives from BERT
-- take only confident suggestions
-- replace the complex word with each suggestion and compare similarity with the original
-- take top 2 most similar suggestions and add the original word to the list
-- take the simplest word out of the (maximum) 3 options
-- repeat until all complex words are dealt with
+1. take the input sentence
+2. use a neural network to identify complex words
+3. for each complex word we get alternatives from BERT
+4. take only confident suggestions
+---
+5. replace the complex word with each suggestion and compare similarity with the original
+6. take top 2 most similar suggestions and add the original word to the list
+7. take the simplest word out of the (maximum) 3 options
+8. replace the target word in the text and repeat for the next complex word
 
 ---
 ## Demo
@@ -103,7 +103,7 @@ Using transformers we can get things like summarization and question answering w
 ---
 ## Fine-tuning
 
-We can fine-tune BERT for our specific domain and then it will perform better for usu.
+We can fine-tune BERT for our specific domain and then it will perform better for us.
 
 ---
 ## True Afy
