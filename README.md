@@ -11,4 +11,5 @@ pip install torch
 pip install scikit-learn
 pip install sentence-transformers # this dependency requires Rust
 pip install nltk
+pip install flask
 ```
