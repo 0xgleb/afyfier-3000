@@ -195,3 +195,17 @@ for input_text in list_texts:
 
   print("\nOriginal text: ", input_text, '\n')
   print("\nSimplified text: ", simplified_text, '\n')
+
+def afyfy(input_text):
+  input_text = input_text.replace('’', "'")
+  new_text = input_text
+  input_padded, index_list, len_list = process_input(input_text)
+  pred_cwi = model_cwi.predict(input_padded)
+  pred_cwi_binary = np.argmax(pred_cwi, axis = 2)
+  complete_cwi_predictions = complete_missing_word(pred_cwi_binary, index_list, len_list)
+
+  simplified_text = get_simplified_text(
+    input_text,
+    complete_cwi_predictions,
+  )
+  return simplified_text
