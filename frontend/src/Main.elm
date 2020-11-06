@@ -10,7 +10,8 @@ import Html exposing (Html, button, div, p, text, textarea)
 import Html.Attributes exposing (size, style)
 import Html.Events exposing (onClick)
 import Http
-import Json.Decode as D
+import Json.Decode as D exposing (string)
+import Json.Encode as E exposing (string)
 import Task
 
 
@@ -50,6 +51,8 @@ init _ =
 
 type Msg
     = InputChanged String
+    | Simplification
+    | GotResponse (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,20 +63,38 @@ update msg model =
             , Cmd.none
             )
 
+        Simplification ->
+            ( model
+            , extractData model.inputText
+            )
+
+        GotResponse result ->
+            case result of
+                Ok simplerText ->
+                    ( { model | outputText = Just simplerText }
+                    , Cmd.none
+                    )
+
+                Err error ->
+                    ( { model | error = Just error }
+                    , Cmd.none
+                    )
+
 
 
 -- Commands
--- extractData : Cmd Msg
--- extractData file =
---     Http.request
---         { method = "POST"
---         , headers = []
---         , url = "http://localhost:8080/"
---         , body = Http.multipartBody [ Http.filePart "image" file ]
---         , expect = Http.expectJson GotAnalysisResponse personalDetailsDecoder
---         , timeout = Just 60000
---         , tracker = Nothing
---         }
+
+
+extractData : String -> Cmd Msg
+extractData input =
+    Http.post
+        { url = "http://localhost:5000/afyfy"
+        , body = Http.jsonBody <| E.string input
+        , expect = Http.expectJson GotResponse D.string
+        }
+
+
+
 -- VIEW
 
 
@@ -83,7 +104,7 @@ view model =
         [ Element.width Element.fill
         , Element.spaceEvenly
         , Background.color (Element.rgb 255 0 254)
-        , Font.family [Font.typeface "Comic Sans"]
+        , Font.family [ Font.typeface "Comic Sans" ]
         ]
     <|
         Element.column [ Element.width Element.fill ]
@@ -108,7 +129,6 @@ view model =
                         , label = Input.labelHidden ""
                         , spellcheck = False
                         }
-
                 , Element.el
                     [ Element.alignRight
                     , Element.width Element.fill
@@ -144,7 +164,9 @@ view model =
                         , Border.rounded 3
                         , Element.padding 10
                         ]
-                        { onPress = Nothing, label = Element.text "Simplify" }
+                        { onPress = Just Simplification
+                        , label = Element.text "Simplify"
+                        }
                 ]
             ]
 
