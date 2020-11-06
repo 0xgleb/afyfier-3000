@@ -1,8 +1,13 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, p, text)
-import Html.Attributes exposing (style)
+import Element
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
+import Element.Input as Input
+import Html exposing (Html, button, div, p, text, textarea)
+import Html.Attributes exposing (size, style)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode as D
@@ -28,59 +33,15 @@ main =
 
 
 type alias Model =
-    { personalDetails : Maybe PersonalDetails
+    { inputText : String
+    , outputText : Maybe String
     , error : Maybe Http.Error
     }
 
 
-type alias PersonalDetails =
-    { surname : Maybe String
-    , givenNames : Maybe String
-    , documentType : DocumentType
-    }
-
-
-type DocumentType
-    = NationalIdentityCard
-    | Unknown
-
-
-documentToString : DocumentType -> String
-documentToString docType =
-    case docType of
-        NationalIdentityCard ->
-            "National Identity Card"
-
-        Unknown ->
-            "Unknown"
-
-
-personalDetailsDecoder : D.Decoder PersonalDetails
-personalDetailsDecoder =
-    D.map3 PersonalDetails
-        (D.field "surname" <| D.nullable D.string)
-        (D.field "givenNames" <| D.nullable D.string)
-        (D.field "documentType" <| documentTypeDecoder)
-
-
-
-documentTypeDecoder : D.Decoder DocumentType
-documentTypeDecoder =
-    D.map
-        (\string ->
-            case string of
-                "NationalIdentityCard" ->
-                    NationalIdentityCard
-
-                _ ->
-                    Unknown
-        )
-        D.string
-
-
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model Nothing Nothing, Cmd.none )
+    ( Model "" Nothing Nothing, Cmd.none )
 
 
 
@@ -88,35 +49,20 @@ init _ =
 
 
 type Msg
-    = ImageRequested
-    | GotAnalysisResponse (Result Http.Error PersonalDetails)
+    = InputChanged String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ImageRequested ->
-            ( model
+        InputChanged txt ->
+            ( { model | inputText = txt }
             , Cmd.none
             )
-
-        GotAnalysisResponse result ->
-            case result of
-                Ok personalDetails ->
-                    ( { model | personalDetails = Just personalDetails }
-                    , Cmd.none
-                    )
-
-                Err error ->
-                    ( { model | error = Just error }
-                    , Cmd.none
-                    )
 
 
 
 -- Commands
-
-
 -- extractData : Cmd Msg
 -- extractData file =
 --     Http.request
@@ -128,47 +74,79 @@ update msg model =
 --         , timeout = Just 60000
 --         , tracker = Nothing
 --         }
-
-
-
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ button [ onClick ImageRequested ] [ text "Choose file" ]
-        , viewPersonalDetails model.personalDetails
+    Element.layout
+        [ Element.width Element.fill
+        , Element.spaceEvenly
+        , Background.color (Element.rgb 255 0 254)
+        , Font.family [Font.typeface "Comic Sans"]
         ]
-
-
-viewPersonalDetails : Maybe PersonalDetails -> Html Msg
-viewPersonalDetails dets =
-    let
-        maybeShow prefix maybeText =
-            case maybeText of
-                Just justText ->
-                    [ p [] [ text <| String.append prefix justText ] ]
-
-                Nothing ->
-                    []
-    in
-    div [] <|
-        case dets of
-            Just personalDetails ->
-                List.concat
-                    [ maybeShow "Surname: " personalDetails.surname
-                    , maybeShow "Given names: " personalDetails.givenNames
-                    , [ p []
-                            [ text <|
-                                String.append "Document type: " <|
-                                    documentToString personalDetails.documentType
-                            ]
-                      ]
+    <|
+        Element.column [ Element.width Element.fill ]
+            [ Element.row [ Element.width Element.fill ]
+                [ Element.el
+                    [ Element.alignLeft
+                    , Element.width Element.fill
+                    , Element.padding 10
                     ]
+                  <|
+                    Input.multiline
+                        [ Background.color <| Element.rgb 250 255 9
+                        , Element.width <| Element.fill
+                        , Element.height <| Element.px 500
+                        ]
+                        { onChange = InputChanged
+                        , text = model.inputText
+                        , placeholder =
+                            Just <|
+                                Input.placeholder [] <|
+                                    Element.text "Put your text here..."
+                        , label = Input.labelHidden ""
+                        , spellcheck = False
+                        }
 
-            Nothing ->
-                []
+                , Element.el
+                    [ Element.alignRight
+                    , Element.width Element.fill
+                    , Element.padding 10
+                    ]
+                  <|
+                    Input.multiline
+                        [ Background.color <| Element.rgb 250 255 9
+                        , Element.spacing 100
+                        , Element.width <| Element.fill
+                        , Element.height <| Element.px 500
+                        ]
+                        { onChange = InputChanged
+                        , text = Maybe.withDefault "" model.outputText
+                        , placeholder =
+                            Just <|
+                                Input.placeholder [] <|
+                                    Element.text "Output text will appear here"
+                        , label = Input.labelHidden ""
+                        , spellcheck = False
+                        }
+                ]
+            , Element.row [ Element.width Element.fill ]
+                [ Element.el
+                    [ Element.centerX
+                    ]
+                  <|
+                    Input.button
+                        [ Background.color <|
+                            Element.rgb 118 118 118
+                        , Border.width 1
+                        , Border.color <| Element.rgb 0 0 0
+                        , Border.rounded 3
+                        , Element.padding 10
+                        ]
+                        { onPress = Nothing, label = Element.text "Simplify" }
+                ]
+            ]
 
 
 
