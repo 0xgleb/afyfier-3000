@@ -11,4 +11,4 @@ def after_request(response):
 
 @app.route('/afyfy', methods=['POST'])
 def hello_world():
-    return afyfy(request.form['text'])
+    return afyfy(request.get_json())
