@@ -172,29 +172,29 @@ def get_simplified_text(input_text, list_cwi_predictions, numb_predictions_displ
   return input_text
 
 
-list_texts = [
- 'If an event of default occurs we may demand immediate repayment of the Loan in writing.\n While we will always try to work with you to agree a way forward, if a default event occurs and we’re unable to agree a solution with you, we may demand immediate repayment of your Loan.',
- 'If you fail to keep to our Agreement, we may appoint a receiver to manage the Property. Although we will appoint the receiver, they will act on your behalf and you will pay their fees. We will, acting reasonably, agree the fees for the receiver’s services and you will be responsible for paying them. We (or a receiver) may also employ and pay agents to undertake some duties.',
- 'Where joint receivers are appointed, each of them may act separately and independently, unless the document appointing them states otherwise.',
-]
-
-print("\n\n")
-
-for input_text in list_texts:
-  input_text = input_text.replace('’', "'")
-  new_text = input_text
-  input_padded, index_list, len_list = process_input(input_text)
-  pred_cwi = model_cwi.predict(input_padded)
-  pred_cwi_binary = np.argmax(pred_cwi, axis = 2)
-  complete_cwi_predictions = complete_missing_word(pred_cwi_binary, index_list, len_list)
-
-  simplified_text = get_simplified_text(
-    input_text,
-    complete_cwi_predictions,
-  )
-
-  print("\nOriginal text: ", input_text, '\n')
-  print("\nSimplified text: ", simplified_text, '\n')
+# list_texts = [
+#  'If an event of default occurs we may demand immediate repayment of the Loan in writing.\n While we will always try to work with you to agree a way forward, if a default event occurs and we’re unable to agree a solution with you, we may demand immediate repayment of your Loan.',
+#  'If you fail to keep to our Agreement, we may appoint a receiver to manage the Property. Although we will appoint the receiver, they will act on your behalf and you will pay their fees. We will, acting reasonably, agree the fees for the receiver’s services and you will be responsible for paying them. We (or a receiver) may also employ and pay agents to undertake some duties.',
+#  'Where joint receivers are appointed, each of them may act separately and independently, unless the document appointing them states otherwise.',
+# ]
+# 
+# print("\n\n")
+# 
+# for input_text in list_texts:
+#   input_text = input_text.replace('’', "'")
+#   new_text = input_text
+#   input_padded, index_list, len_list = process_input(input_text)
+#   pred_cwi = model_cwi.predict(input_padded)
+#   pred_cwi_binary = np.argmax(pred_cwi, axis = 2)
+#   complete_cwi_predictions = complete_missing_word(pred_cwi_binary, index_list, len_list)
+# 
+#   simplified_text = get_simplified_text(
+#     input_text,
+#     complete_cwi_predictions,
+#   )
+# 
+#   print("\nOriginal text: ", input_text, '\n')
+#   print("\nSimplified text: ", simplified_text, '\n')
 
 def afyfy(input_text):
   input_text = input_text.replace('’', "'")
