@@ -13,6 +13,6 @@ def after_request(response):
 def hello_world():
     return jsonify(afyfy(request.get_json()))
 
-# @app.route('/summarize', methods=['POST'])
-# def hello_world():
-#     return jsonify(afyfy(request.get_json()))
+@app.route('/summarize', methods=['POST'])
+def hello_world():
+    return jsonify(summarize(request.get_json()))
